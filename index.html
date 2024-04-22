@@ -8,48 +8,70 @@
 
 <body>
   
+  <h1>MP3 Player</h1>
+  <button id="select-folder">Select Folder</button>
+  <ul id="file-list"></ul>
+  <div id="pagination"></div>
+  <audio id="audio-player" controls></audio>
 
+  <script>
+    const { ipcRenderer } = require('electron');
 
-    <h1>Hello World!</h1>
-    <p>
-        We are using Node.js <span id="node-version"></span>,
-        Chromium <span id="chrome-version"></span>,
-        and Electron <span id="electron-version"></span>.
-    </p>
-    
-    <button id="select-folder">Select Folder</button>
-    <ul id="file-list"></ul>
-    <audio id="audio-player" controls></audio>
-    <script>
-      const { ipcRenderer } = require('electron');
-  
-      document.getElementById('select-folder').addEventListener('click', () => {
-        ipcRenderer.send('open-folder-dialog');
-      });
-  
-      ipcRenderer.on('folder-selected', (event, folderPath) => {
-        const fileList = document.getElementById('file-list');
-        fileList.innerHTML = ''; // Clear previous file list
-  
-        ipcRenderer.send('get-files', folderPath);
-      });
-  
-      ipcRenderer.on('files-list', (event, files) => {
-        const fileList = document.getElementById('file-list');
-        const audioPlayer = document.getElementById('audio-player');
-  
-        files.forEach((file) => {
-          const listItem = document.createElement('li');
-          listItem.textContent = file.name;
-          listItem.addEventListener('click', () => {
-            audioPlayer.src = file.path;
-            audioPlayer.play();
-          });
-          fileList.appendChild(listItem);
+    let currentPage = 1;
+    const itemsPerPage = 13;
+    let files = [];
+
+    document.getElementById('select-folder').addEventListener('click', () => {
+      ipcRenderer.send('open-folder-dialog');
+    });
+
+    ipcRenderer.on('folder-selected', (event, folderPath) => {
+      ipcRenderer.send('get-files', folderPath);
+    });
+
+    ipcRenderer.on('files-list', (event, fileList) => {
+      files = fileList;
+      showFiles(1);
+    });
+
+    function showFiles(page) {
+      const fileList = document.getElementById('file-list');
+      fileList.innerHTML = ''; // Clear previous file list
+
+      const startIndex = (page - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      const displayedFiles = files.slice(startIndex, endIndex);
+
+      displayedFiles.forEach((file) => {
+        const listItem = document.createElement('li');
+        listItem.textContent = file.name;
+        listItem.addEventListener('click', () => {
+          document.getElementById('audio-player').src = file.path;
+          document.getElementById('audio-player').play();
         });
+        fileList.appendChild(listItem);
       });
-    </script>
-    <script src="./renderer.js"></script>
+
+      showPagination();
+    }
+
+    function showPagination() {
+      const pagination = document.getElementById('pagination');
+      pagination.innerHTML = ''; // Clear previous pagination
+
+      const totalPages = Math.ceil(files.length / itemsPerPage);
+
+      for (let i = 1; i <= totalPages; i++) {
+        const pageNumber = document.createElement('span');
+        pageNumber.textContent = i;
+        pageNumber.addEventListener('click', () => {
+          currentPage = i;
+          showFiles(currentPage);
+        });
+        pagination.appendChild(pageNumber);
+      }
+    }
+  </script>
 </body>
 
 </html>
