@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+</head>
+
+<body>
+  
+
+
+    <h1>Hello World!</h1>
+    <p>
+        We are using Node.js <span id="node-version"></span>,
+        Chromium <span id="chrome-version"></span>,
+        and Electron <span id="electron-version"></span>.
+    </p>
+    
+    <button id="select-folder">Select Folder</button>
+    <ul id="file-list"></ul>
+    <audio id="audio-player" controls></audio>
+    <script>
+      const { ipcRenderer } = require('electron');
+  
+      document.getElementById('select-folder').addEventListener('click', () => {
+        ipcRenderer.send('open-folder-dialog');
+      });
+  
+      ipcRenderer.on('folder-selected', (event, folderPath) => {
+        const fileList = document.getElementById('file-list');
+        fileList.innerHTML = ''; // Clear previous file list
+  
+        ipcRenderer.send('get-files', folderPath);
+      });
+  
+      ipcRenderer.on('files-list', (event, files) => {
+        const fileList = document.getElementById('file-list');
+        const audioPlayer = document.getElementById('audio-player');
+  
+        files.forEach((file) => {
+          const listItem = document.createElement('li');
+          listItem.textContent = file.name;
+          listItem.addEventListener('click', () => {
+            audioPlayer.src = file.path;
+            audioPlayer.play();
+          });
+          fileList.appendChild(listItem);
+        });
+      });
+    </script>
+    <script src="./renderer.js"></script>
+</body>
+
+</html>

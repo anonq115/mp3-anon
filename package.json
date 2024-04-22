@@ -1,0 +1,16 @@
+{
+  "name": "mp3-anon",
+  "version": "1.0.0",
+  "description": "mkII mp3 player",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "lalo",
+  "license": "ISC",
+  "dependencies": {
+    "electron": "^30.0.1",
+    "node": "^20.11.1"
+  }
+}
