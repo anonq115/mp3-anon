@@ -15,7 +15,7 @@
   <audio id="audio-player" controls></audio>
 
   <script>
-    const { ipcRenderer } = require('electron');
+    const { ipcRenderer, globalShortcut } = require('electron');
 
     let currentPage = 1;
     const itemsPerPage = 13;
@@ -70,8 +70,24 @@
         });
         pagination.appendChild(pageNumber);
       }
+    }   
+    
+    document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'F24') {
+      const currentWindow = require('electron').remote.getCurrentWindow();
+      if (currentWindow.isMinimized()) {
+        currentWindow.restore();
+      } else {
+        currentWindow.minimize();
+      }
     }
+  });
+});
+
+
   </script>
+ 
 </body>
 
 </html>
