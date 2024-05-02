@@ -7,6 +7,16 @@
 </head>
 
 <body>
+<style>
+
+body{overflow-y: hidden; /* Hide vertical scrollbar */
+  overflow-x: hidden; /* Hide horizontal scrollbar */
+  
+  
+  
+  }
+h1{ margin:0; padding:0; }
+</style>
   
   <h1>MP3 Player</h1>
   <button id="select-folder">Select Folder</button>
@@ -20,6 +30,7 @@
     let currentPage = 1;
     const itemsPerPage = 13;
     let files = [];
+    let currentSongIndex = 0;
 
     document.getElementById('select-folder').addEventListener('click', () => {
       ipcRenderer.send('open-folder-dialog');
@@ -46,8 +57,7 @@
         const listItem = document.createElement('li');
         listItem.textContent = file.name;
         listItem.addEventListener('click', () => {
-          document.getElementById('audio-player').src = file.path;
-          document.getElementById('audio-player').play();
+          playSong(file.path);
         });
         fileList.appendChild(listItem);
       });
@@ -71,23 +81,34 @@
         pagination.appendChild(pageNumber);
       }
     }   
-    
-    document.addEventListener('DOMContentLoaded', () => {
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'F24') {
-      const currentWindow = require('electron').remote.getCurrentWindow();
-      if (currentWindow.isMinimized()) {
-        currentWindow.restore();
-      } else {
-        currentWindow.minimize();
-      }
+
+    function playSong(songPath) {
+      const audioPlayer = document.getElementById('audio-player');
+      audioPlayer.src = songPath;
+      audioPlayer.play();
+      currentSongIndex = files.findIndex(file => file.path === songPath);
     }
-  });
-});
 
+    document.addEventListener('DOMContentLoaded', () => {
+      const audioPlayer = document.getElementById('audio-player');
+      audioPlayer.addEventListener('ended', () => {
+        if (currentSongIndex < files.length - 1) {
+          playSong(files[currentSongIndex + 1].path);
+        }
+      });
 
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'F24') {
+          const currentWindow = require('electron').remote.getCurrentWindow();
+          if (currentWindow.isMinimized()) {
+            currentWindow.restore();
+          } else {
+            currentWindow.minimize();
+          }
+        }
+      });
+    });
   </script>
  
 </body>
-
 </html>
