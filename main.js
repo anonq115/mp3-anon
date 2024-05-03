@@ -67,13 +67,12 @@ app.whenReady().then(() => {
       mainWindow.show();
     }
   });
-
- mainWindow.on('blur', () => {
-    if (!stickyBoxWindow || !stickyBoxWindow.isFocused()) {
+  mainWindow.on('blur', () => {
+    if (!stickyBoxWindow?.isFocused()) {
       mainWindow.minimize(); // Minimize the main window
     }
   });
-
+  
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createMainWindow();
