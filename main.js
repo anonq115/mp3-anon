@@ -1,10 +1,9 @@
-const { app, BrowserWindow, dialog, ipcMain, globalShortcut } = require('electron');
+const { app, BrowserWindow, dialog, ipcMain, globalShortcut, screen } = require('electron');
 const fs = require('fs');
 const path = require('path');
 
 let mainWindow;
 let stickyBoxWindow;
-
 function createMainWindow() {
   mainWindow = new BrowserWindow({
     width: 410,
@@ -22,8 +21,11 @@ function createMainWindow() {
 
   mainWindow.loadFile('index.html');
 
+
+ 
   return mainWindow;
 }
+
 
 function createStickyBoxWindow() {
   stickyBoxWindow = new BrowserWindow({
@@ -66,9 +68,9 @@ app.whenReady().then(() => {
     }
   });
 
-  mainWindow.on('blur', () => {
-    if (!stickyBoxWindow.isFocused()) {
-    
+ mainWindow.on('blur', () => {
+    if (!stickyBoxWindow || !stickyBoxWindow.isFocused()) {
+      mainWindow.minimize(); // Minimize the main window
     }
   });
 
