@@ -61,28 +61,32 @@ app.whenReady().then(() => {
   stickyBoxWindow = createStickyBoxWindow();
 
   globalShortcut.register('F24', () => {
+    console.log('F24 key pressed');
     if (mainWindow.isVisible()) {
       mainWindow.hide();
     } else {
       mainWindow.show();
     }
   });
+  
   mainWindow.on('blur', () => {
     if (!stickyBoxWindow?.isFocused()) {
       mainWindow.minimize(); // Minimize the main window
     }
   });
   
+  
+  mainWindow.on('close', () => {
+    if (stickyBoxWindow) {
+      stickyBoxWindow.close();
+    }
+  });
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createMainWindow();
     }
   });
-mainWindow.on('close', () => {
-  if (stickyBoxWindow) {
-    stickyBoxWindow.close();
-  }
-});
+
   ipcMain.on('open-folder-dialog', async (event) => {
     const result = await dialog.showOpenDialog(mainWindow, {
       properties: ['openDirectory'],

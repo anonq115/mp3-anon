@@ -12,10 +12,28 @@
 body{overflow-y: hidden; /* Hide vertical scrollbar */
   overflow-x: hidden; /* Hide horizontal scrollbar */
   
-  
+  -webkit-user-select: none;  
+  -moz-user-select: none;    
+  -ms-user-select: none;      
+  user-select: none;
   
   }
 h1{ margin:0; padding:0; }
+
+
+
+
+#file-list {  list-style-type: none;
+         
+  padding: 0; /* Remove default padding */
+        margin: 0; /* Remove default margin */
+        }
+
+#file-list li:hover {
+            background-color: #ffa7a7; /* Change background color on hover */
+            cursor: pointer; /* Show pointer cursor on hover */
+         
+        }
 </style>
   
   <h1>MP3 Player</h1>
