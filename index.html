@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html >
 <head>
     <meta charset="UTF-8">
     <title>Hello World!</title>
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+    
 </head>
 
 <body>
@@ -16,7 +17,11 @@ body{overflow-y: hidden; /* Hide vertical scrollbar */
   -moz-user-select: none;    
   -ms-user-select: none;      
   user-select: none;
+
   
+  font-size:15.5px;
+  color: #111111;
+  font-weight: 450;
   }
 h1{ margin:0; padding:0; }
 
@@ -24,16 +29,23 @@ h1{ margin:0; padding:0; }
 
 
 #file-list {  list-style-type: none;
-         
   padding: 0; /* Remove default padding */
-        margin: 0; /* Remove default margin */
+  margin: 0; /* Remove default margin */  
         }
 
 #file-list li:hover {
-            background-color: #ffa7a7; /* Change background color on hover */
+  background-color: #871419;/* Change background color on hover */
             cursor: pointer; /* Show pointer cursor on hover */
-         
+            color: #d6d6d6;
         }
+        
+        
+        .selected-page {
+  background-color: #871419;
+  color: #d6d6d6;
+  cursor: pointer;
+}
+
 </style>
   
   <h1>MP3 Player</h1>
@@ -73,7 +85,10 @@ h1{ margin:0; padding:0; }
 
       displayedFiles.forEach((file) => {
         const listItem = document.createElement('li');
-        listItem.textContent = file.name;
+        
+        
+        listItem.textContent = decodeURI(file.name);
+
         listItem.addEventListener('click', () => {
           playSong(file.path);
         });
@@ -97,15 +112,27 @@ h1{ margin:0; padding:0; }
           showFiles(currentPage);
         });
         pagination.appendChild(pageNumber);
-      }
-    }   
+        
+      
+    // Add a class to highlight the selected page number
+    if (i === currentPage) {
+      pageNumber.classList.add('selected-page');
+    }
+
+    pagination.appendChild(pageNumber);
+  }
+      
+      
+}   
 
     function playSong(songPath) {
-      const audioPlayer = document.getElementById('audio-player');
-      audioPlayer.src = songPath;
-      audioPlayer.play();
-      currentSongIndex = files.findIndex(file => file.path === songPath);
-    }
+  const audioPlayer = document.getElementById('audio-player');
+  const encodedPath = songPath.replace(/#/g, '%23'); // Encode '#' character
+  audioPlayer.src = encodedPath;
+  audioPlayer.play();
+  currentSongIndex = files.findIndex(file => file.path === songPath);
+}
+
 
     document.addEventListener('DOMContentLoaded', () => {
       const audioPlayer = document.getElementById('audio-player');
@@ -113,6 +140,9 @@ h1{ margin:0; padding:0; }
         if (currentSongIndex < files.length - 1) {
           playSong(files[currentSongIndex + 1].path);
         }
+      
+      
+      
       });
 
       document.addEventListener('keydown', (event) => {
