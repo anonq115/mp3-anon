@@ -121,9 +121,31 @@ h1{ margin:0; padding:0; }
 
     pagination.appendChild(pageNumber);
   }
-      
-      
 }   
+let scrolling = false;
+
+window.addEventListener('wheel', (event) => {
+  if (!scrolling) {
+    scrolling = true;
+    setTimeout(() => {
+      scrolling = false;
+      if (event.deltaY > 0) {
+        // Scrolled down, switch to next page
+        currentPage++;
+        if (currentPage > Math.ceil(files.length / itemsPerPage)) {
+          currentPage = 1; // Loop back to first page
+        }
+      } else if (event.deltaY < 0) {
+        // Scrolled up, switch to previous page
+        currentPage--;
+        if (currentPage < 1) {
+          currentPage = Math.ceil(files.length / itemsPerPage); // Loop to last page
+        }
+      }
+      showFiles(currentPage);
+    }, 200); // Adjust this delay as needed to prevent rapid page switching
+  }
+});
 
     function playSong(songPath) {
   const audioPlayer = document.getElementById('audio-player');
