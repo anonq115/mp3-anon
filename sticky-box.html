@@ -90,37 +90,38 @@
             }
           }
 
-          @keyframes pulse-GradientGlow {
-  0% {
-    width: 50px;
-    height: 50px;
-    opacity: 0.6;
-    filter: blur(12px) contrast(1150%) brightness(3120%);
-    right: -81.5px;
-  }
-  50% {
-    width: 100px;
-    height: 100px;
-    opacity: 1;
-    filter: blur(30px) contrast(109%) brightness(150%);
-    right: -101.5px;
-  }
-  75% {
-    width: 200px;
-    height: 200px;
-    opacity: 0.35;
-    filter: blur(65px) contrast(109%) brightness(150%);
-    right: -81.5px;
-  }
-  100% {
-    width: 200px;
-    height: 200px;
-    opacity: 0;
-    filter: blur(65px) contrast(120%) brightness(150%);
-    right: -81.5px;
-  }
- 
-}
+          @keyframes pulse-GradientGlow{
+      0% {
+        width: 50px;
+        height: 50px;
+        opacity: 0.6;
+        filter: blur(12px) contrast(1150%) brightness(3120%);
+        right: -81.5px;  
+        filter: blur(5px) contrast(109%) brightness(150%);
+      }
+      50% {
+        width: 100px;
+        height: 100px;
+        opacity: 1;
+        filter: blur(30px)contrast(109%) brightness(150%);
+        right: -101.5px;
+      }
+      75% {
+        width: 200px;
+        height:200px;
+        opacity: 0.35;
+        filter: blur(65px)contrast(109%) brightness(150%);
+        right: -81.5px;
+      }
+      100% {
+        width: 200px;
+        height:200px;
+        opacity: 0;
+        filter: blur(65px) contrast(120%) brightness(150%);
+        right: -81.5px;
+      }
+    }
+
 
            
           }
@@ -134,27 +135,7 @@
           <div id="gradientGlow2"></div>
           <div id="gradientGlow3"></div>
         `;
-         // Add event listener to restart the animation
-    const gradientGlow1 = shadow.getElementById('gradientGlow1');
-    const gradientGlow2 = shadow.getElementById('gradientGlow2');
-    const gradientGlow3 = shadow.getElementById('gradientGlow3');
-
-    gradientGlow1.addEventListener('animationiteration', () => {
-      restartAnimation(gradientGlow1);
-    });
-    gradientGlow2.addEventListener('animationiteration', () => {
-      restartAnimation(gradientGlow2);
-    });
-    gradientGlow3.addEventListener('animationiteration', () => {
-      restartAnimation(gradientGlow3);
-    });
-
-    // Function to restart animation
-    function restartAnimation(element) {
-      element.style.animation = 'none';
-      void element.offsetWidth; // Trigger reflow
-      element.style.animation = null;
-    }
+ 
   }
 }
       
