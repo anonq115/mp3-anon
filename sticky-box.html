@@ -1,7 +1,8 @@
 <body>
   <glass-effect-sticky-box></glass-effect-sticky-box>
 
-  <script>
+  <script>const { ipcRenderer } = require('electron');
+
     class GlassEffectStickyBox extends HTMLElement {
       constructor() {
         super();
@@ -136,12 +137,17 @@
           <div id="gradientGlow3"></div>
         `;
  
-  }
-}
-      
-      
-    
+  
+
+        ipcRenderer.on('audio-data-sent', (event, filePath) => {
+          console.log(`Audio data received in sticky-box.html: ${filePath}`);
+        });
+      }
+    }
 
     customElements.define('glass-effect-sticky-box', GlassEffectStickyBox);
+    
+    console.log('meow meow meow im being console logged inside the sticky-box console');
+  
   </script>
 </body>

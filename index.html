@@ -153,6 +153,8 @@ window.addEventListener('wheel', (event) => {
   audioPlayer.src = encodedPath;
   audioPlayer.play();
   currentSongIndex = files.findIndex(file => file.path === songPath);
+    // Send the audio file path to the main process
+    ipcRenderer.send('audio-data-sent', songPath);
 }
 
 

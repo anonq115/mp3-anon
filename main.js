@@ -26,30 +26,33 @@ function createMainWindow() {
   return mainWindow;
 }
 
-
 function createStickyBoxWindow() {
   stickyBoxWindow = new BrowserWindow({
     width: 300,
     height: 500,
     x: 1620,
     y: 300,
-    frame: false,
-    transparent: true,
+    frame: true,
+    transparent: false,
     alwaysOnTop: true,
     skipTaskbar: true,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
       enableRemoteModule: true,
+      contentSecurityPolicy: "script-src 'self';"
     },
   });
-  stickyBoxWindow.loadFile(path.join(__dirname, 'sticky-box.html'));
 
-  stickyBoxWindow.setIgnoreMouseEvents(true);
+  stickyBoxWindow.loadFile(path.join(__dirname, 'sticky-box.html')); // Load the HTML file
+  /*stickyBoxWindow.setIgnoreMouseEvents(true);*/
   stickyBoxWindow.setAlwaysOnTop(true, 'screen-saver', 1); // Set as always on top
   stickyBoxWindow.setAlwaysOnTop(true, 'pop-up-menu');
   return stickyBoxWindow;
+
 }
+
+
 
 ipcMain.on('ping', (event, message) => {
   console.log('Received message:', message);
@@ -86,7 +89,12 @@ app.whenReady().then(() => {
       createMainWindow();
     }
   });
-
+  
+  
+  ipcMain.on('audio-data-sent', (event, filePath) => {
+    console.log(`Audio data sent to sticky-box.html was received by sticky-box.html successfully: ${filePath}`);
+  });
+  
   ipcMain.on('open-folder-dialog', async (event) => {
     const result = await dialog.showOpenDialog(mainWindow, {
       properties: ['openDirectory'],
