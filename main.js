@@ -73,7 +73,7 @@ app.whenReady().then(() => {
       mainWindowBounds = mainWindow.getBounds();
       //coords solution because the animation to sticky-box.html stops working if you minimize the index.html window this might be screen specific so adjust accordingly
       //1164 is the max where i can fully 'off screen' the index.html window so that it dont get in the way
-      mainWindow.setBounds({ x: mainWindowBounds.x + 1164, y: mainWindowBounds.y, width: mainWindowBounds.width, height: mainWindowBounds.height });
+      mainWindow.setBounds({ x: mainWindowBounds.x + 1164, y: mainWindowBounds.y + 819, width: mainWindowBounds.width, height: mainWindowBounds.height });
       isMainWindowOffScreen = true;
     } else {
       console.log('Moving window back to its original position');
