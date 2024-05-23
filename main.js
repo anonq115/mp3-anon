@@ -84,6 +84,8 @@ app.whenReady().then(() => {
       stickyBoxWindow.close();
     }
   });
+  
+  
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createMainWindow();
@@ -91,10 +93,10 @@ app.whenReady().then(() => {
   });
   
   
-  ipcMain.on('audio-data-sent', (event, filePath) => {
+ /* ipcMain.on('audio-data-sent', (event, filePath) => {
     console.log(`Audio data sent to sticky-box.html was received by sticky-box.html successfully: ${filePath}`);
   });
-  
+  */
   ipcMain.on('open-folder-dialog', async (event) => {
     const result = await dialog.showOpenDialog(mainWindow, {
       properties: ['openDirectory'],
@@ -127,3 +129,22 @@ app.on('window-all-closed', () => {
     app.quit();
   }
 });
+
+
+ipcMain.on('audio-analyzed-data', (event, dataArray) => {
+    if (stickyBoxWindow) {
+      stickyBoxWindow.webContents.send('audio-analyzed-data', dataArray);
+    }
+});
+
+
+
+
+ipcMain.on('message-to-main', (event, message) => {
+  console.log('Message received in main process:', message);
+  if (stickyBoxWindow) {
+      stickyBoxWindow.webContents.send('message-from-main', message);
+  }
+});
+
+//ipc main receieves message from index.html to pass to sticky-box.html

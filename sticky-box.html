@@ -1,7 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glass Effect Sticky Box</title>
+</head>
+
 <body>
   <glass-effect-sticky-box></glass-effect-sticky-box>
 
-  <script>const { ipcRenderer } = require('electron');
+  <script>
+    const { ipcRenderer } = require('electron');
 
     class GlassEffectStickyBox extends HTMLElement {
       constructor() {
@@ -13,13 +24,12 @@
         style.textContent = `
           :host {
             --anon: url('https://i.imgur.com/HtgBy4K.jpg');
+            --pulse-color: red;
             display: block;
             background-color: #f0f0f0;
-
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center;
-            background-color: black;
           }
 
           #stickyBox {
@@ -54,32 +64,27 @@
           }
 
           #gradientGlow1,
-          #gradientGlow2,
-          #gradientGlow3 {
-            position: fixed;
-            right: -81.5px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 50px;
-            height: 50px;
-            border-top-left-radius: 25px;
-            border-bottom-left-radius: 25px;
-            background: var(--anon);
-            z-index: -2;
-            animation-fill-mode: both; 
-            animation:  pulse-GradientGlow 1.79s infinite; /* Adjusted animation property */
-            transition: width 5s, height 5s, right 0.5s;
-           
-          }
+#gradientGlow2,
+#gradientGlow3 {
+  position: fixed;
+  right: -81.5px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 50px;
+  height: 50px;
+  border-top-left-radius: 25px;
+  border-bottom-left-radius: 25px;
+  background: var(--pulse-color);
+  z-index: -2;
+  animation-fill-mode: both;
+}
 
           #gradientGlow2 {
             z-index: -3;
-            animation-delay: -.88s;
           }
 
           #gradientGlow3 {
             z-index: -4;
-            animation-delay: -1.45s; 
           }
 
           @keyframes breathe {
@@ -89,42 +94,6 @@
             to {
               transform: translateY(-50%) scale(1.05);
             }
-          }
-
-          @keyframes pulse-GradientGlow{
-      0% {
-        width: 50px;
-        height: 50px;
-        opacity: 0.6;
-        filter: blur(12px) contrast(1150%) brightness(3120%);
-        right: -81.5px;  
-        filter: blur(5px) contrast(109%) brightness(150%);
-      }
-      50% {
-        width: 100px;
-        height: 100px;
-        opacity: 1;
-        filter: blur(30px)contrast(109%) brightness(150%);
-        right: -101.5px;
-      }
-      75% {
-        width: 200px;
-        height:200px;
-        opacity: 0.35;
-        filter: blur(65px)contrast(109%) brightness(150%);
-        right: -81.5px;
-      }
-      100% {
-        width: 200px;
-        height:200px;
-        opacity: 0;
-        filter: blur(65px) contrast(120%) brightness(150%);
-        right: -81.5px;
-      }
-    }
-
-
-           
           }
         `;
 
@@ -136,18 +105,61 @@
           <div id="gradientGlow2"></div>
           <div id="gradientGlow3"></div>
         `;
- 
-  
 
-        ipcRenderer.on('audio-data-sent', (event, filePath) => {
-          console.log(`Audio data received in sticky-box.html: ${filePath}`);
+        ipcRenderer.on('audio-analyzed-data', (event, dataArray) => {
+          drawVisualizer(dataArray, shadow);
         });
+
+        function drawVisualizer(dataArray, shadow) {
+  const average = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
+  const scaleFactor = 2;
+  const pulseSize = Math.min(200, Math.max(50, average * scaleFactor));
+
+  const volume = Math.min(1, average / 255);
+  const hue = 60 + Math.round(volume * 60);
+  const saturation = Math.min(100, Math.max(50, pulseSize / 2));
+  const pulseColor = `hsl(${hue}, ${saturation}%, 50%)`;
+
+  document.documentElement.style.setProperty('--pulse-color', pulseColor);
+
+  const glowElements = shadow.querySelectorAll('#gradientGlow1, #gradientGlow2, #gradientGlow3');
+
+  const animationDuration = .01; // Duration of each pulse cycle in seconds
+  const pulseCount = 1; // Number of pulses
+  const pulseDelay = animationDuration / pulseCount; // Delay between each pulse
+
+  glowElements.forEach((element, index) => {
+    element.style.width = `${pulseSize}px`;
+    element.style.height = `${pulseSize}px`;
+    element.style.animationDuration = `${animationDuration}s`;
+    element.style.animationDelay = `${index * pulseDelay}s`;
+  });
+
+  // Adjust the opacity and filter based on pulseSize
+  glowElements.forEach(element => {
+    if (pulseSize <= 50) {
+      element.style.opacity = '0.6';
+      element.style.filter = 'blur(5px) contrast(109%) brightness(150%)';
+    } else if (pulseSize <= 100) {
+      element.style.opacity = '1';
+      element.style.filter = 'blur(30px) contrast(109%) brightness(150%)';
+    } else {
+      element.style.opacity = '0.35';
+      element.style.filter = 'blur(65px) contrast(109%) brightness(150%)';
+    }
+  });
+}
+
       }
+
     }
 
     customElements.define('glass-effect-sticky-box', GlassEffectStickyBox);
-    
-    console.log('meow meow meow im being console logged inside the sticky-box console');
-  
+
+    ipcRenderer.on('message-from-main', (event, message) => {
+      console.log('Received message:', message);
+    });
   </script>
 </body>
+
+</html>

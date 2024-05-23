@@ -55,7 +55,7 @@ h1{ margin:0; padding:0; }
   <audio id="audio-player" controls></audio>
 
   <script>
-    const { ipcRenderer, globalShortcut } = require('electron');
+    const { ipcRenderer, globalShortcut, remote } = require('electron');
 
     let currentPage = 1;
     const itemsPerPage = 13;
@@ -74,6 +74,8 @@ h1{ margin:0; padding:0; }
       files = fileList;
       showFiles(1);
     });
+
+
 
     function showFiles(page) {
       const fileList = document.getElementById('file-list');
@@ -154,9 +156,29 @@ window.addEventListener('wheel', (event) => {
   audioPlayer.play();
   currentSongIndex = files.findIndex(file => file.path === songPath);
     // Send the audio file path to the main process
-    ipcRenderer.send('audio-data-sent', songPath);
-}
+    ipcRenderer.send('audio-data-sent', songPath);/*so what is this doing then? wtf are you talking about this is clearly sending the data to main js  ٢٢٢٢٢٢٢٢٢٢٢٢*/
+    
+    
+    
+        // Capture and analyze the audio context
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const source = audioContext.createMediaElementSource(audioPlayer);
+    const analyser = audioContext.createAnalyser();
+    source.connect(analyser);
+    analyser.connect(audioContext.destination); // Connect to speakers
 
+    analyser.fftSize = 2048;
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+
+    function analyzeAudio() {
+        analyser.getByteFrequencyData(dataArray);
+        ipcRenderer.send('audio-analyzed-data', dataArray); // Send analyzed data to main process
+        requestAnimationFrame(analyzeAudio);
+    }
+
+    analyzeAudio();
+}
 
     document.addEventListener('DOMContentLoaded', () => {
       const audioPlayer = document.getElementById('audio-player');
@@ -176,10 +198,18 @@ window.addEventListener('wheel', (event) => {
             currentWindow.restore();
           } else {
             currentWindow.minimize();
-          }
-        }
+                                                    }
+                                                      }
       });
     });
+    
+    
+    const dataToSend = { message: 'Hello from index.html!' };
+  
+    ipcRenderer.send('message-to-main', 'Hello from index.html! this passes through the main.js renderer');
+     
+     
+     //first send audio data to sticky box .html  
   </script>
  
 </body>
