@@ -112,7 +112,7 @@
 
         function drawVisualizer(dataArray, shadow) {
   const average = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
-  const scaleFactor = 2;
+  const scaleFactor = 12.5;
   const pulseSize = Math.min(200, Math.max(50, average * scaleFactor));
 
   const volume = Math.min(1, average / 255);

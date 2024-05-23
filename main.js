@@ -63,21 +63,32 @@ app.whenReady().then(() => {
   mainWindow = createMainWindow();
   stickyBoxWindow = createStickyBoxWindow();
 
+  let isMainWindowOffScreen = false;
+  let mainWindowBounds = null;
+  
   globalShortcut.register('F24', () => {
     console.log('F24 key pressed');
-    if (mainWindow.isVisible()) {
-      mainWindow.hide();
+    if (!isMainWindowOffScreen) {
+      console.log('Moving window off-screen');
+      mainWindowBounds = mainWindow.getBounds();
+      //coords solution because the animation to sticky-box.html stops working if you minimize the index.html window this might be screen specific so adjust accordingly
+      //1164 is the max where i can fully 'off screen' the index.html window so that it dont get in the way
+      mainWindow.setBounds({ x: mainWindowBounds.x + 1164, y: mainWindowBounds.y, width: mainWindowBounds.width, height: mainWindowBounds.height });
+      isMainWindowOffScreen = true;
     } else {
-      mainWindow.show();
+      console.log('Moving window back to its original position');
+      mainWindow.setBounds(mainWindowBounds);
+      isMainWindowOffScreen = false;
     }
   });
   
-  mainWindow.on('blur', () => {
+  
+  /*mainWindow.on('blur', () => {
     if (!stickyBoxWindow?.isFocused()) {
       mainWindow.minimize(); // Minimize the main window
     }
   });
-  
+  */
   
   mainWindow.on('close', () => {
     if (stickyBoxWindow) {
