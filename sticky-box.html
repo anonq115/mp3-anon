@@ -76,7 +76,8 @@
   border-bottom-left-radius: 25px;
   background: var(--pulse-color);
   z-index: -2;
-  animation-fill-mode: both;
+
+
 }
 
           #gradientGlow2 {
@@ -111,12 +112,11 @@
         });
 
         function drawVisualizer(dataArray, shadow) {
-  const average = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
-  const scaleFactor = 12.5;
-  const pulseSize = Math.min(200, Math.max(50, average * scaleFactor));
+  const amplitude = Math.max(...dataArray); // Get the maximum amplitude from the dataArray
+  const scaleFactor = 1;
+  const pulseSize = Math.min(200, Math.max(50, amplitude * scaleFactor));
 
-  const volume = Math.min(1, average / 255);
-  const hue = 60 + Math.round(volume * 60);
+  const hue = 60 + Math.round(amplitude * 60);
   const saturation = Math.min(100, Math.max(50, pulseSize / 2));
   const pulseColor = `hsl(${hue}, ${saturation}%, 50%)`;
 
@@ -124,7 +124,7 @@
 
   const glowElements = shadow.querySelectorAll('#gradientGlow1, #gradientGlow2, #gradientGlow3');
 
-  const animationDuration = .01; // Duration of each pulse cycle in seconds
+  const animationDuration = .05; // Duration of each pulse cycle in seconds
   const pulseCount = 1; // Number of pulses
   const pulseDelay = animationDuration / pulseCount; // Delay between each pulse
 
@@ -149,6 +149,7 @@
     }
   });
 }
+
 
       }
 
