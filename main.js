@@ -32,8 +32,8 @@ function createStickyBoxWindow() {
     height: 500,
     x: 1620,
     y: 300,
-    frame: true,
-    transparent: false,
+    frame: false,
+    transparent: true,
     alwaysOnTop: true,
     skipTaskbar: true,
     webPreferences: {
@@ -45,7 +45,7 @@ function createStickyBoxWindow() {
   });
 
   stickyBoxWindow.loadFile(path.join(__dirname, 'sticky-box.html')); // Load the HTML file
-  /*stickyBoxWindow.setIgnoreMouseEvents(true);*/
+  stickyBoxWindow.setIgnoreMouseEvents(true);
   stickyBoxWindow.setAlwaysOnTop(true, 'screen-saver', 1); // Set as always on top
   stickyBoxWindow.setAlwaysOnTop(true, 'pop-up-menu');
   return stickyBoxWindow;
@@ -73,7 +73,7 @@ app.whenReady().then(() => {
       mainWindowBounds = mainWindow.getBounds();
       //coords solution because the animation to sticky-box.html stops working if you minimize the index.html window this might be screen specific so adjust accordingly
       //1164 is the max where i can fully 'off screen' the index.html window so that it dont get in the way
-      mainWindow.setBounds({ x: mainWindowBounds.x + 1164, y: mainWindowBounds.y + 819, width: mainWindowBounds.width, height: mainWindowBounds.height });
+      mainWindow.setBounds({ x: mainWindowBounds.x + 1164, y: mainWindowBounds.y + 817, width: mainWindowBounds.width, height: mainWindowBounds.height });
       isMainWindowOffScreen = true;
     } else {
       console.log('Moving window back to its original position');

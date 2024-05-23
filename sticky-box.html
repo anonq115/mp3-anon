@@ -24,7 +24,7 @@
         style.textContent = `
           :host {
             --anon: url('https://i.imgur.com/HtgBy4K.jpg');
-            --pulse-color: red;
+          
             display: block;
             background-color: #f0f0f0;
             background-size: cover;
@@ -74,7 +74,7 @@
   height: 50px;
   border-top-left-radius: 25px;
   border-bottom-left-radius: 25px;
-  background: var(--pulse-color);
+  background: var(--anon);
   z-index: -2;
 
 
@@ -113,7 +113,7 @@
 
         function drawVisualizer(dataArray, shadow) {
   const amplitude = Math.max(...dataArray); // Get the maximum amplitude from the dataArray
-  const scaleFactor = 1;
+  const scaleFactor = .80;
   const pulseSize = Math.min(200, Math.max(50, amplitude * scaleFactor));
 
   const hue = 60 + Math.round(amplitude * 60);
@@ -124,7 +124,7 @@
 
   const glowElements = shadow.querySelectorAll('#gradientGlow1, #gradientGlow2, #gradientGlow3');
 
-  const animationDuration = .05; // Duration of each pulse cycle in seconds
+  const animationDuration = .013; // Duration of each pulse cycle in seconds
   const pulseCount = 1; // Number of pulses
   const pulseDelay = animationDuration / pulseCount; // Delay between each pulse
 
@@ -139,15 +139,17 @@
   glowElements.forEach(element => {
     if (pulseSize <= 50) {
       element.style.opacity = '0.6';
-      element.style.filter = 'blur(5px) contrast(109%) brightness(150%)';
+      element.style.filter = 'blur(12px) contrast(109%) brightness(150%)';
     } else if (pulseSize <= 100) {
       element.style.opacity = '1';
-      element.style.filter = 'blur(30px) contrast(109%) brightness(150%)';
+      element.style.filter = 'blur(27px) contrast(109%) brightness(150%)';
     } else {
-      element.style.opacity = '0.35';
-      element.style.filter = 'blur(65px) contrast(109%) brightness(150%)';
+      element.style.opacity = '0.39';
+      element.style.filter = 'blur(39px) contrast(109%) brightness(150%)';
     }
-  });
+  });  
+  
+  
 }
 
 
