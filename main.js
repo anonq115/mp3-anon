@@ -4,6 +4,9 @@ const path = require('path');
 
 let mainWindow;
 let stickyBoxWindow;
+let isDialogOpen = false;
+
+
 function createMainWindow() {
   mainWindow = new BrowserWindow({
     width: 410,
@@ -82,14 +85,8 @@ app.whenReady().then(() => {
     }
   });
   
-  
-  /*mainWindow.on('blur', () => {
-    if (!stickyBoxWindow?.isFocused()) {
-      mainWindow.minimize(); // Minimize the main window
-    }
-  });
-  */
-  
+  /*if dialog clicked or on diologue do not close the main window even tho were not clicking on it if clicking outside window and dialogues are not open offscreen the window
+  using coords*/ 
   mainWindow.on('close', () => {
     if (stickyBoxWindow) {
       stickyBoxWindow.close();
@@ -103,17 +100,39 @@ app.whenReady().then(() => {
     }
   });
   
-  
+  mainWindow.on('blur', () => {
+    console.log('Main window blur event');
+    console.log('isDialogOpen:', isDialogOpen);
+    if (!isDialogOpen && !stickyBoxWindow?.isFocused()) {
+      if (!isMainWindowOffScreen) {
+        console.log('Moving window off-screen');
+        mainWindowBounds = mainWindow.getBounds();
+        mainWindow.setBounds({
+          x: mainWindowBounds.x + 1164,
+          y: mainWindowBounds.y + 817,
+          width: mainWindowBounds.width,
+          height: mainWindowBounds.height
+        });
+        isMainWindowOffScreen = true;
+      } else {
+        console.log('Moving window back to its original position');
+        mainWindow.setBounds(mainWindowBounds);
+        isMainWindowOffScreen = false;
+      }
+    }
+  });
  /* ipcMain.on('audio-data-sent', (event, filePath) => {
     console.log(`Audio data sent to sticky-box.html was received by sticky-box.html successfully: ${filePath}`);
   });
   */
   ipcMain.on('open-folder-dialog', async (event) => {
+    isDialogOpen = true; // Set flag to true before opening the dialog
     const result = await dialog.showOpenDialog(mainWindow, {
       properties: ['openDirectory'],
       modal: false // Add this line to prevent the dialog from hiding the main window
 
     });
+    isDialogOpen = false; // Set flag to false after the dialog is closed
 
     if (!result.canceled && result.filePaths.length > 0) {
       event.reply('folder-selected', result.filePaths[0]);
