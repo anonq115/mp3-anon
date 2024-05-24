@@ -75,7 +75,7 @@ globalShortcut.register('F24', () => {
   console.log('F24 key pressed');
   mainWindow.focus(); // Focus on the main window /*the solution to our problems <3333 make it "" force""focus on f24 to that click events works like intended */
   if (!isMainWindowOffScreen) {
-      console.log('Moving window off-screen');
+      console.log('Moving window off-screen by f24');
       mainWindowBounds = mainWindow.getBounds();
       mainWindow.setBounds({
           x: mainWindowBounds.x + 1164,
@@ -85,7 +85,7 @@ globalShortcut.register('F24', () => {
       });
       isMainWindowOffScreen = true;
   } else {
-      console.log('Moving window back to its original position');
+      console.log('Moving window back to its original position f24');
       mainWindow.setBounds(mainWindowBounds);
       isMainWindowOffScreen = false;
   }
@@ -112,7 +112,7 @@ globalShortcut.register('F24', () => {
       console.log('isDialogOpen:', isDialogOpen);
       if (!isDialogOpen && !stickyBoxWindow?.isFocused() && !isMainWindowClicked) {
           if (!isMainWindowOffScreen) {
-              console.log('Moving window off-screen');
+              console.log('Moving window off-screen by clicking out of the window');
               mainWindowBounds = mainWindow.getBounds();
               mainWindow.setBounds({
                   x: mainWindowBounds.x + 1164,
@@ -121,12 +121,7 @@ globalShortcut.register('F24', () => {
                   height: mainWindowBounds.height
               });
               isMainWindowOffScreen = true;
-          } else {
-              console.log('Moving window back to its original position');
-              mainWindow.setBounds(mainWindowBounds);
-              isMainWindowOffScreen = false;
-              mainWindow.focus();
-          }
+          } 
       }
       isMainWindowClicked = false;
   });
