@@ -66,24 +66,30 @@ app.whenReady().then(() => {
   mainWindow = createMainWindow();
   stickyBoxWindow = createStickyBoxWindow();
 
+  let isMainWindowClicked = false;
   let isMainWindowOffScreen = false;
   let mainWindowBounds = null;
   
-  globalShortcut.register('F24', () => {
-    console.log('F24 key pressed');
-    if (!isMainWindowOffScreen) {
+  // Register the F24 global shortcut
+globalShortcut.register('F24', () => {
+  console.log('F24 key pressed');
+  mainWindow.focus(); // Focus on the main window /*the solution to our problems <3333 make it "" force""focus on f24 to that click events works like intended */
+  if (!isMainWindowOffScreen) {
       console.log('Moving window off-screen');
       mainWindowBounds = mainWindow.getBounds();
-      //coords solution because the animation to sticky-box.html stops working if you minimize the index.html window this might be screen specific so adjust accordingly
-      //1164 is the max where i can fully 'off screen' the index.html window so that it dont get in the way
-      mainWindow.setBounds({ x: mainWindowBounds.x + 1164, y: mainWindowBounds.y + 817, width: mainWindowBounds.width, height: mainWindowBounds.height });
+      mainWindow.setBounds({
+          x: mainWindowBounds.x + 1164,
+          y: mainWindowBounds.y + 817,
+          width: mainWindowBounds.width,
+          height: mainWindowBounds.height
+      });
       isMainWindowOffScreen = true;
-    } else {
+  } else {
       console.log('Moving window back to its original position');
       mainWindow.setBounds(mainWindowBounds);
       isMainWindowOffScreen = false;
-    }
-  });
+  }
+});
   
   /*if dialog clicked or on diologue do not close the main window even tho were not clicking on it if clicking outside window and dialogues are not open offscreen the window
   using coords*/ 
@@ -100,27 +106,39 @@ app.whenReady().then(() => {
     }
   });
   
+ 
   mainWindow.on('blur', () => {
-    console.log('Main window blur event');
-    console.log('isDialogOpen:', isDialogOpen);
-    if (!isDialogOpen && !stickyBoxWindow?.isFocused()) {
-      if (!isMainWindowOffScreen) {
-        console.log('Moving window off-screen');
-        mainWindowBounds = mainWindow.getBounds();
-        mainWindow.setBounds({
-          x: mainWindowBounds.x + 1164,
-          y: mainWindowBounds.y + 817,
-          width: mainWindowBounds.width,
-          height: mainWindowBounds.height
-        });
-        isMainWindowOffScreen = true;
-      } else {
-        console.log('Moving window back to its original position');
-        mainWindow.setBounds(mainWindowBounds);
-        isMainWindowOffScreen = false;
+      console.log('Main window blur event');
+      console.log('isDialogOpen:', isDialogOpen);
+      if (!isDialogOpen && !stickyBoxWindow?.isFocused() && !isMainWindowClicked) {
+          if (!isMainWindowOffScreen) {
+              console.log('Moving window off-screen');
+              mainWindowBounds = mainWindow.getBounds();
+              mainWindow.setBounds({
+                  x: mainWindowBounds.x + 1164,
+                  y: mainWindowBounds.y + 817,
+                  width: mainWindowBounds.width,
+                  height: mainWindowBounds.height
+              });
+              isMainWindowOffScreen = true;
+          } else {
+              console.log('Moving window back to its original position');
+              mainWindow.setBounds(mainWindowBounds);
+              isMainWindowOffScreen = false;
+          }
       }
-    }
+      isMainWindowClicked = false;
   });
+  
+  mainWindow.on('focus', () => {
+      console.log('Main window focus event');
+  });
+  
+  // Listen for click events on the main window
+  mainWindow.on('click', () => {
+      isMainWindowClicked = true;
+  });
+  
  /* ipcMain.on('audio-data-sent', (event, filePath) => {
     console.log(`Audio data sent to sticky-box.html was received by sticky-box.html successfully: ${filePath}`);
   });
