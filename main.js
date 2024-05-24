@@ -125,6 +125,7 @@ globalShortcut.register('F24', () => {
               console.log('Moving window back to its original position');
               mainWindow.setBounds(mainWindowBounds);
               isMainWindowOffScreen = false;
+              mainWindow.focus();
           }
       }
       isMainWindowClicked = false;
